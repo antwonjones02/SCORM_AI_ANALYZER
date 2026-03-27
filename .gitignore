@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pyo
+*.json
+output/
+scorm_inbox/
+*.zip
+*.wav
+*.mp4
+.env
+slide_*.png
+screenshots/
