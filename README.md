@@ -1,4 +1,4 @@
-# SCORM AI Readiness Analyzer 🦊
+# SCORM AI Readiness Analyzer 
 
 **Built by Claw for Antwon Jones | Delta Air Lines L&D**
 
@@ -241,7 +241,6 @@ This tool powers the **AI Readiness Assessment** consulting offer:
 4. Scores reveal the gap: most enterprise catalogs score 15–35/100
 5. Deliverable: assessment report + remediation playbook + recommendations
 
-**Pricing:** $2,500 flat fee / catalog assessment, 5-day turnaround
 
 ---
 
