@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SCORM Batch Analyzer — by Claw 🦊
+SCORM Batch Analyzer
 Processes a folder of SCORM ZIPs and outputs per-course JSON + a master PDF report.
 
 Usage:
