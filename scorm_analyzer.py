@@ -561,7 +561,7 @@ def run_player_pipeline(zip_path, metadata, organizations, extract_dir, llm_prov
     # Screenshots output dir
     course_name = Path(zip_path).stem
     safe_name = ''.join(c if c.isalnum() or c in '-_' else '_' for c in course_name)
-    screenshots_dir = Path('/home/ubuntu/.openclaw/workspace/output/screenshots') / safe_name
+    screenshots_dir = Path(os.environ.get('SCORM_OUTPUT_DIR', str(Path(__file__).parent.parent.parent / 'output' / 'screenshots'))) / safe_name
     screenshots_dir.mkdir(parents=True, exist_ok=True)
 
     # Find entry point

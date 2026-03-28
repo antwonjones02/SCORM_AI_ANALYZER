@@ -8,7 +8,7 @@ from weasyprint import HTML, CSS
 from pathlib import Path
 import os
 
-OUTPUT_PATH = "/home/ubuntu/.openclaw/workspace/output/scorm_ai_readiness_playbook.pdf"
+OUTPUT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../output/scorm_ai_readiness_playbook.pdf")
 Path(OUTPUT_PATH).parent.mkdir(parents=True, exist_ok=True)
 
 # ── CSS ────────────────────────────────────────────────────────────────────────
@@ -290,7 +290,7 @@ HTML_STR = """<!DOCTYPE html>
 
 <div class="divstrip">The Skills Economy Context</div>
 
-<p><span class="bold navy">Skills-based organizations</span> are no longer a future concept — they are the operating model for talent management at companies like Delta, IBM, Unilever, and Mastercard. The core shift: move from job-title-based HR to skills-based talent decisions — hiring, promotion, learning, and deployment all driven by verified skills profiles.</p>
+<p><span class="bold navy">Skills-based organizations</span> are no longer a future concept — they are the operating model for talent management at companies like IBM, Unilever, Mastercard, and Walmart. The core shift: move from job-title-based HR to skills-based talent decisions — hiring, promotion, learning, and deployment all driven by verified skills profiles.</p>
 
 <p>This shift creates an urgent dependency on learning content that is tagged to a skills taxonomy. Without it, you cannot map "this course develops these skills" — which means you cannot build skills-based learning paths, cannot show employees how to close their skills gaps, and cannot demonstrate to executives that L&D investment is moving the skills needle.</p>
 
@@ -727,7 +727,7 @@ HTML_STR = """<!DOCTYPE html>
 <div class="roi">
   <div class="roi-title">ROI Calculation Framework — LMS AI Readiness Remediation</div>
   <table>
-    <thead><tr><th>Metric</th><th>Before Remediation</th><th>After Remediation (Est.)</th><th>Delta</th></tr></thead>
+    <thead><tr><th>Metric</th><th>Before Remediation</th><th>After Remediation (Est.)</th><th>Change</th></tr></thead>
     <tbody>
       <tr><td>Course completion rate</td><td>34%</td><td>46%</td><td>+12 pts (34% lift)</td></tr>
       <tr><td>AI recommendation click-through</td><td>8%</td><td>31%</td><td>+23 pts (3.9× lift)</td></tr>

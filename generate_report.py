@@ -12,7 +12,7 @@ Input:
     - Reads from scorm_inbox/*.json by default if no arg given
 
 Output:
-    - PDF at /home/ubuntu/.openclaw/workspace/output/scorm_report_YYYY-MM-DD.pdf
+    - PDF at output/scorm_report_YYYY-MM-DD.pdf
 """
 
 import json
@@ -37,7 +37,7 @@ L = "#F5F5F5"
 G = "#28a745"
 Y = "#FF9800"
 
-WORKSPACE = Path('/home/ubuntu/.openclaw/workspace')
+WORKSPACE = Path(os.environ.get('SCORM_WORKSPACE', str(Path(__file__).parent.parent.parent)))
 OUTPUT_DIR = WORKSPACE / 'output'
 
 

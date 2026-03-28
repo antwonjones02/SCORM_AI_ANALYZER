@@ -24,7 +24,7 @@ from datetime import datetime
 sys.path.insert(0, str(Path(__file__).parent))
 from scorm_analyzer import analyze_scorm
 
-WORKSPACE = Path('/home/ubuntu/.openclaw/workspace')
+WORKSPACE = Path(os.environ.get('SCORM_WORKSPACE', str(Path(__file__).parent.parent.parent)))
 OUTPUT_BASE = WORKSPACE / 'output'
 
 
