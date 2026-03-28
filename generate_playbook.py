@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 LMS AI Readiness Playbook — Definitive Edition
-Delta-branded consulting PDF via WeasyPrint
+Professional-branded PDF via WeasyPrint
 """
 
 from weasyprint import HTML, CSS
