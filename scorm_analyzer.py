@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SCORM Analyzer — by Claw 🦊
+SCORM Analyzer
 Parses SCORM 1.2 and SCORM 2004 packages and extracts structured metadata.
 Outputs clean JSON ready for LMS audits, AI readiness assessments, or A2A marketplaces.
 
@@ -10,7 +10,7 @@ Usage:
 Options:
     --llm               Use AI to infer skills, generate summary
     --video             Extract + transcribe video (MP4) using Whisper, then re-score with transcript
-    --llm-provider      'claude' (default) or 'deepseek' (uses DEEPSEEK_API_KEY)
+    --llm-provider      'claude' (default) or preferred LLM
     --output            Save JSON to file (default: print to stdout)
 
 Pipeline (--video):
