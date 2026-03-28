@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SCORM Player Agent — by Claw 🦊
+SCORM Player Agent
 Renders a SCORM package in a real browser, navigates through it like a learner,
 captures all LMS data, takes screenshots, and generates a full course report.
 
