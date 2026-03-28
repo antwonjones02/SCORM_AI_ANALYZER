@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SCORM AI Readiness Report Generator — by Claw 🦊
+SCORM AI Readiness Report Generator
 Generates a consulting-grade PDF from analyzed SCORM course JSON files.
 
 Usage:
