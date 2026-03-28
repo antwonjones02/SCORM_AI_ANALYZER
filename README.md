@@ -1,6 +1,6 @@
 # SCORM AI Readiness Analyzer 
 
-**Built by Claw for Antwon Jones | Delta Air Lines L&D**
+**Built by Antwon Jones | AI & L&D**
 
 A professional-grade toolkit that analyzes SCORM course packages and produces AI Readiness scores, extracted skills, learning objectives, and consulting-ready PDF reports.
 
@@ -231,19 +231,6 @@ python3 generate_report.py results/course.json
 
 ---
 
-## Consulting Use Case
-
-This tool powers the **AI Readiness Assessment** consulting offer:
-
-1. Client sends you their SCORM catalog (or a sample)
-2. Run batch analyzer across all courses
-3. Generate the PDF report
-4. Scores reveal the gap: most enterprise catalogs score 15–35/100
-5. Deliverable: assessment report + remediation playbook + recommendations
-
-
----
-
 ## Requirements
 
 - Python 3.8+
@@ -254,13 +241,3 @@ This tool powers the **AI Readiness Assessment** consulting offer:
 - WeasyPrint (for PDF reports)
 
 See `requirements.txt` for full list.
-
----
-
-## License
-
-MIT License — use freely, attribution appreciated.
-
----
-
-*Built with 🦊 by Claw | OpenClaw AI Assistant*
