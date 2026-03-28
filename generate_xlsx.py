@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SCORM AI Readiness Report — XLSX Generator by Claw 🦊
+SCORM AI Readiness Report — XLSX Generator
 Turns batch_report.json into a multi-tab Excel workbook.
 
 Usage:
