@@ -327,26 +327,17 @@ FULL TRANSCRIPT:
 {transcript_text[:6000]}"""
 
         if provider == 'deepseek':
-            import urllib.request
+            import requests as _requests
             ds_key = api_key or os.environ.get('DEEPSEEK_API_KEY')
             if not ds_key:
                 return {"error": "DEEPSEEK_API_KEY not set"}
-            payload = json.dumps({
-                "model": "deepseek-chat",
-                "messages": [{"role": "user", "content": prompt}],
-                "max_tokens": 1500,
-                "temperature": 0.3
-            }).encode()
-            req = urllib.request.Request(
+            api_resp = _requests.post(
                 "https://api.deepseek.com/v1/chat/completions",
-                data=payload,
-                headers={
-                    "Authorization": f"Bearer {ds_key}",
-                    "Content-Type": "application/json"
-                }
-            )
-            with urllib.request.urlopen(req, timeout=60) as resp:
-                api_resp = json.loads(resp.read())
+                headers={"Authorization": f"Bearer {ds_key}", "Content-Type": "application/json"},
+                json={"model": "deepseek-chat", "messages": [{"role": "user", "content": prompt}],
+                      "max_tokens": 1500, "temperature": 0.3},
+                timeout=60
+            ).json()
             raw = api_resp['choices'][0]['message']['content'].strip()
         else:
             import anthropic
@@ -400,26 +391,17 @@ Output ONLY valid JSON with these fields:
 }}"""
 
         if provider == 'deepseek':
-            import urllib.request
+            import requests as _requests
             ds_key = api_key or os.environ.get('DEEPSEEK_API_KEY')
             if not ds_key:
                 return {"error": "DEEPSEEK_API_KEY not set"}
-            payload = json.dumps({
-                "model": "deepseek-chat",
-                "messages": [{"role": "user", "content": prompt}],
-                "max_tokens": 1024,
-                "temperature": 0.3
-            }).encode()
-            req = urllib.request.Request(
+            api_resp = _requests.post(
                 "https://api.deepseek.com/v1/chat/completions",
-                data=payload,
-                headers={
-                    "Authorization": f"Bearer {ds_key}",
-                    "Content-Type": "application/json"
-                }
-            )
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                api_resp = json.loads(resp.read())
+                headers={"Authorization": f"Bearer {ds_key}", "Content-Type": "application/json"},
+                json={"model": "deepseek-chat", "messages": [{"role": "user", "content": prompt}],
+                      "max_tokens": 1024, "temperature": 0.3},
+                timeout=30
+            ).json()
             raw = api_resp['choices'][0]['message']['content'].strip()
         else:
             import anthropic
@@ -668,17 +650,32 @@ def run_player_pipeline(zip_path, metadata, organizations, extract_dir, llm_prov
             except Exception:
                 pass
 
+    # For Rise courses: use file:// protocol directly to bypass cloud LMS handshake.
+    # Rise's shouldLoad() explicitly allows file:// protocol, while HTTP mode
+    # triggers an AICC handshake with an external LMS that never completes offline.
+    rise_file_url = None
+    scormcontent_index = Path(extract_dir) / "scormcontent" / "index.html"
+    if course_type == "rise" and scormcontent_index.exists():
+        rise_file_url = f"file://{scormcontent_index}"
+
     try:
+        launch_args = []
+        if rise_file_url:
+            # Allow file:// access to local assets; disable web security for cross-origin shim
+            launch_args = ["--allow-file-access-from-files", "--disable-web-security",
+                           "--disable-site-isolation-trials"]
+
         with sync_playwright() as pw:
-            browser = pw.chromium.launch(headless=True)
-            context = browser.new_context(viewport={"width": 1280, "height": 720})
+            browser = pw.chromium.launch(headless=True, args=launch_args)
+            context = browser.new_context(viewport={"width": 1280, "height": 720},
+                                          bypass_csp=bool(rise_file_url))
             context.add_init_script(SCORM_SHIM)  # applies to ALL frames including iframes
             page = context.new_page()
 
             # Re-inject shim whenever a new frame is attached
             page.on("frameattached", lambda frame: frame.evaluate(SCORM_SHIM) if True else None)
 
-            url = f"http://localhost:{port}/{entry_href}"
+            url = rise_file_url if rise_file_url else f"http://localhost:{port}/{entry_href}"
             try:
                 page.goto(url, timeout=20000, wait_until='domcontentloaded')
             except Exception:
@@ -691,9 +688,61 @@ def run_player_pipeline(zip_path, metadata, organizations, extract_dir, llm_prov
 
             # ── Rise: scroll-based capture ────────────────────────────────────
             if course_type == "rise":
-                scroll_y = 0
-                scroll_increment = 800
-                for shot_num in range(1, MAX_SCREENSHOTS + 1):
+                # Take cover-page screenshot first, then click the launch link
+                cover_path = screenshots_dir / "slide_001.png"
+                page.screenshot(path=str(cover_path))
+                slides_data.append({
+                    "index": 1,
+                    "screenshot_path": str(cover_path),
+                    "interaction_type": "scroll",
+                    "stalled": False,
+                })
+
+                # Click the "Start Course" / launch element (Rise uses <a> not <button>)
+                launched = False
+                try:
+                    page.get_by_text("START COURSE", exact=True).first.click()
+                    launched = True
+                except Exception:
+                    pass
+                if not launched:
+                    for sel in ['a[class*="action-link"]', 'a[class*="start" i]',
+                                'button:has-text("Start")', 'a:has-text("Start")']:
+                        try:
+                            el = page.query_selector(sel)
+                            if el and el.is_visible():
+                                el.click()
+                                launched = True
+                                break
+                        except Exception:
+                            pass
+                if launched:
+                    time.sleep(2.5)
+
+                # Scroll the Rise content container (page-wrap or first overflow-auto div)
+                RISE_SCROLL_JS = """
+(dy) => {
+  // Rise renders in a scrollable div, not the window
+  var el = Array.from(document.querySelectorAll('*')).find(function(e) {
+    var s = window.getComputedStyle(e);
+    return (s.overflow === 'auto' || s.overflow === 'scroll' ||
+            s.overflowY === 'auto' || s.overflowY === 'scroll') &&
+           e.scrollHeight > e.clientHeight + 50;
+  });
+  if (el) {
+    el.scrollBy(0, dy);
+    return {scrollTop: el.scrollTop, scrollHeight: el.scrollHeight, clientHeight: el.clientHeight, found: true};
+  }
+  window.scrollBy(0, dy);
+  return {scrollTop: window.scrollY, scrollHeight: document.body.scrollHeight, clientHeight: window.innerHeight, found: false};
+}
+"""
+                scroll_increment = 700
+                prev_scroll_top = -1
+                stall_streak = 0
+                MAX_STALL = 3
+
+                for shot_num in range(2, MAX_SCREENSHOTS + 1):
                     try:
                         shot_path = screenshots_dir / f"slide_{shot_num:03d}.png"
                         page.screenshot(path=str(shot_path))
@@ -704,9 +753,25 @@ def run_player_pipeline(zip_path, metadata, organizations, extract_dir, llm_prov
                             "interaction_type": interaction,
                             "stalled": False,
                         })
-                        scroll_y += scroll_increment
-                        page.evaluate(f"window.scrollTo(0, {scroll_y})")
+                        scroll_info = page.evaluate(RISE_SCROLL_JS, scroll_increment)
                         time.sleep(0.8)
+
+                        cur_top = scroll_info.get("scrollTop", 0) if isinstance(scroll_info, dict) else 0
+
+                        # Stall: scroll position didn't change
+                        if cur_top == prev_scroll_top and prev_scroll_top >= 0:
+                            stall_streak += 1
+                            stall_count += 1
+                            if stall_streak >= MAX_STALL:
+                                break
+                        else:
+                            stall_streak = 0
+                        prev_scroll_top = cur_top
+
+                        # Break when we've reached the bottom (only after actual scrolling)
+                        if isinstance(scroll_info, dict) and cur_top > 0:
+                            if scroll_info.get("scrollTop", 0) + scroll_info.get("clientHeight", 0) >= scroll_info.get("scrollHeight", 1) - 50:
+                                break
                     except Exception:
                         break
 
