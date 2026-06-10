@@ -1,6 +1,16 @@
+# Core engine (scormlib parse/mine/score/report) needs NOTHING beyond the
+# Python standard library. The packages below enable the optional pipelines.
+
+# --player pipeline: headless browser course playback
+playwright>=1.40.0
+
+# --llm enrichment (Claude / DeepSeek)
 anthropic>=0.20.0
 requests>=2.31.0
-openai-whisper
-playwright>=1.40.0
-weasyprint>=60.0
+
+# Excel export (generate_xlsx.py)
 openpyxl>=3.1.0
+
+# Optional — uncomment if needed:
+# openai-whisper        # --video pipeline (heavy: pulls in PyTorch)
+# weasyprint>=60.0      # PDF reports (needs system pango/cairo libs)

@@ -37,7 +37,7 @@ L = "#F5F5F5"
 G = "#28a745"
 Y = "#FF9800"
 
-WORKSPACE = Path(os.environ.get('SCORM_WORKSPACE', str(Path(__file__).parent.parent.parent)))
+WORKSPACE = Path(os.environ.get('SCORM_WORKSPACE', str(Path.cwd())))
 OUTPUT_DIR = WORKSPACE / 'output'
 
 
@@ -123,6 +123,8 @@ def load_course_data(path):
             player = data.get('player_pipeline') or {}
             video = data.get('video_pipeline') or {}
             score = llm.get('ai_readiness_score')
+            if score is None:  # deterministic baseline (v2 results)
+                score = data.get('stats', {}).get('ai_readiness_score')
             courses.append({
                 'file': Path(data.get('source_file', jf.name)).name,
                 'title': data['metadata'].get('title') or Path(data.get('source_file', '')).stem,

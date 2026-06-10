@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "scorm-ai-analyzer"
+version = "2.0.0"
+description = "One-stop SCORM extractor: parse, play, score and report on SCORM/xAPI/cmi5/AICC packages"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Antwon Jones" }]
+keywords = ["scorm", "xapi", "elearning", "lms", "ai-readiness"]
+
+# Core has ZERO dependencies — parsing, mining, scoring, HTML reports
+# all run on the Python standard library.
+dependencies = []
+
+[project.optional-dependencies]
+player = ["playwright>=1.40.0"]
+llm = ["anthropic>=0.20.0", "requests>=2.31.0"]
+video = ["openai-whisper"]
+pdf = ["weasyprint>=60.0"]
+xlsx = ["openpyxl>=3.1.0"]
+all = [
+    "playwright>=1.40.0",
+    "anthropic>=0.20.0",
+    "requests>=2.31.0",
+    "openai-whisper",
+    "weasyprint>=60.0",
+    "openpyxl>=3.1.0",
+]
+dev = ["pytest>=7.0", "playwright>=1.40.0"]
+
+[tool.setuptools]
+packages = ["scormlib"]
+py-modules = ["scormshop", "scorm_analyzer", "batch_analyzer",
+              "generate_report", "generate_xlsx", "generate_playbook",
+              "scorm_player"]
+
+[project.scripts]
+scormshop = "scormshop:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

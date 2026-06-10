@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Untitled Module 7</title>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; margin: 40px; color: #333; }
+    p { max-width: 560px; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <p>This brief module reminds staff to lock their workstation whenever they step away from their desk, even for a moment.</p>
+  <script>
+    (function () {
+      "use strict";
+
+      function findAPI(win) {
+        var tries = 0;
+        while ((win.API_1484_11 == null) && (win.parent != null) && (win.parent != win)) {
+          tries++;
+          if (tries > 500) { return null; }
+          win = win.parent;
+        }
+        return win.API_1484_11;
+      }
+
+      function getAPI() {
+        var api = null;
+        try {
+          api = findAPI(window);
+          if ((api == null) && (window.opener != null)) {
+            api = findAPI(window.opener);
+          }
+        } catch (e) { api = null; }
+        return api;
+      }
+
+      var api = getAPI();
+      if (api != null) {
+        try {
+          api.Initialize("");
+          api.SetValue("cmi.completion_status", "completed");
+          api.Commit("");
+          api.Terminate("");
+        } catch (e) {
+          /* never crash outside an LMS */
+        }
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest identifier="com.example.dataprivacy.rise" version="1.0"
+          xmlns="http://www.imsproject.org/xsd/imscp_rootv1p1p2"
+          xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_rootv1p2"
+          xmlns:imsmd="http://www.imsglobal.org/xsd/imsmd_rootv1p2p1"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.imsproject.org/xsd/imscp_rootv1p1p2 imscp_rootv1p1p2.xsd
+                              http://www.adlnet.org/xsd/adlcp_rootv1p2 adlcp_rootv1p2.xsd
+                              http://www.imsglobal.org/xsd/imsmd_rootv1p2p1 imsmd_rootv1p2p1.xsd">
+  <metadata>
+    <schema>ADL SCORM</schema>
+    <schemaversion>1.2</schemaversion>
+    <imsmd:lom>
+      <imsmd:general>
+        <imsmd:title>
+          <imsmd:langstring xml:lang="en">Data Privacy Basics</imsmd:langstring>
+        </imsmd:title>
+        <imsmd:language>en</imsmd:language>
+        <imsmd:description>
+          <imsmd:langstring xml:lang="en">A scrolling micro-course covering the essentials of data privacy at work: GDPR principles, strong passwords, phishing awareness, device hygiene, and how to report a suspected data breach.</imsmd:langstring>
+        </imsmd:description>
+        <imsmd:keyword>
+          <imsmd:langstring xml:lang="en">data privacy</imsmd:langstring>
+        </imsmd:keyword>
+        <imsmd:keyword>
+          <imsmd:langstring xml:lang="en">GDPR</imsmd:langstring>
+        </imsmd:keyword>
+      </imsmd:general>
+    </imsmd:lom>
+  </metadata>
+  <organizations default="ORG-DATA-PRIVACY">
+    <organization identifier="ORG-DATA-PRIVACY">
+      <title>Data Privacy Basics</title>
+      <item identifier="ITEM-LESSON-1" identifierref="RES-DRIVER" isvisible="true">
+        <title>Data Privacy Basics</title>
+      </item>
+    </organization>
+  </organizations>
+  <resources>
+    <resource identifier="RES-DRIVER" type="webcontent" adlcp:scormtype="sco" href="scormdriver/indexAPI.html">
+      <file href="scormdriver/indexAPI.html"/>
+      <file href="scormcontent/index.html"/>
+    </resource>
+  </resources>
+</manifest>
