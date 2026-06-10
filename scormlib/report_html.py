@@ -98,9 +98,11 @@ def _course_section(result, idx, embed_screenshots=True):
         ('Title', meta.get('title')),
         ('Description', meta.get('description')),
         ('Keywords / skills tags', meta.get('keywords')),
-        ('Duration (declared)',
-         f"{meta.get('duration_minutes')} min" if meta.get('duration_minutes')
-         else meta.get('duration')),
+        ('Duration',
+         (f"{meta.get('duration_minutes')} min"
+          + (' (estimated from content)'
+             if meta.get('duration_source') == 'estimated_from_content' else ''))
+         if meta.get('duration_minutes') else meta.get('duration')),
         ('Language', meta.get('language')),
         ('Author', meta.get('author')),
         ('Version', meta.get('version')),
@@ -150,7 +152,21 @@ def _course_section(result, idx, embed_screenshots=True):
         content_html += ('<details open><summary>Slide / section titles</summary><ol>'
                          + ''.join(f'<li>{esc(t)}</li>' for t in slide_titles[:40])
                          + '</ol></details>')
-    if quiz_qs:
+    quiz_items = content.get('quiz_items') or []
+    if quiz_items:
+        rows = ''
+        for qi in quiz_items[:25]:
+            opts = []
+            correct = set(qi.get('correct') or [])
+            for o in qi.get('options', []):
+                opts.append(f'<strong style="color:#1a7f37;">✓ {esc(o)}</strong>'
+                            if o in correct else esc(o))
+            rows += (f'<tr><td>{esc(qi.get("question"))}</td>'
+                     f'<td>{" · ".join(opts) or "—"}</td></tr>')
+        content_html += ('<details open><summary>Quiz questions (structured)</summary>'
+                         '<table><tr><th>Question</th><th>Options (✓ = correct)</th></tr>'
+                         + rows + '</table></details>')
+    elif quiz_qs:
         content_html += ('<details open><summary>Quiz questions detected</summary><ul>'
                          + ''.join(f'<li>{esc(q)}</li>' for q in quiz_qs[:25])
                          + '</ul></details>')

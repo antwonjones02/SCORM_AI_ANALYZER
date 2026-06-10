@@ -40,7 +40,7 @@ class TestContentMining:
                    '"Always wear protective equipment in the lab."}]}')
         escaped = payload.replace('"', '\\"') if False else payload
         js.write_text(f"window.globalProvideData('slide', '{escaped}');")
-        texts, _questions, titles = parse_storyline_js(js)
+        texts, _questions, titles, _quiz_items, _dur = parse_storyline_js(js)
         assert 'Slide One' in titles
         assert any('protective equipment' in t for t in texts)
 

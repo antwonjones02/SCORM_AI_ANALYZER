@@ -157,19 +157,21 @@ def parse_aicc(crs_path):
 # ── Authoring tool fingerprints ──────────────────────────────────────────────
 
 _TOOL_FILE_FINGERPRINTS = [
-    # (tool name, list of path fragments — any match wins)
-    ('Articulate Rise', ['scormcontent/index.html', 'scormdriver/indexapi.html']),
+    # (tool name, list of path fragments — any match wins).
+    # NOTE: scormdriver/ alone is just the Rustici SCORM Driver (used by
+    # Rise, dominKnow and others) — not tool-specific on its own.
+    ('Articulate Rise', ['scormcontent/index.html']),
     ('Articulate Storyline', ['story.html', 'story_html5.html', 'html5/data/js/data.js',
                               'mobile/player.html', 'story_content/']),
     ('Adobe Captivate', ['assets/js/cpm.js', 'dr/cpm.js', 'project.txt', 'assets/cpquizinfo.xml']),
-    ('iSpring', ['data/swfobject.js', 'res/data.js', 'data/player.js']),
-    ('Lectora', ['trivantis.css', 'trivantis-azure.js', 'lectora.js']),
-    ('Camtasia', ['scripts/config_xml.js', 'skins/express_show/']),
-    ('Evolve', ['course/en/course.json', 'adapt/js/adapt.min.js']),
+    ('iSpring', ['data/player.js', 'data/quizplayer.js', 'data/swfobject.js']),
+    ('Lectora', ['trivantis-']),
+    ('Camtasia', ['techsmith-smart-player.min.js', 'skins/express_show/']),
+    ('Evolve', ['course/en/course.json']),
     ('Adapt Learning', ['adapt/js/adapt.min.js', 'course/config.json']),
     ('Gomo', ['gomo.js', 'wrapper/gomo_storage.js']),
     ('Elucidat', ['elucidat.js', 'js/elucidat']),
-    ('Easygenerator', ['settings.js', 'easygenerator']),
+    ('Easygenerator', ['easygenerator']),
     ('dominKnow', ['dominknow', 'dkpackage']),
 ]
 
@@ -298,11 +300,20 @@ def find_entry_point(extract_dir, resources=None, package_type=None):
     """
     extract_dir = Path(extract_dir)
 
-    def _exists(href):
+    # Hrefs in descriptors are relative to the descriptor's own directory,
+    # which may be nested when the zip wraps the course in a folder.
+    pt = package_type or detect_package_type(extract_dir)
+    base_dir = Path(pt['descriptor']).parent if pt.get('descriptor') else extract_dir
+
+    def _resolve(href):
+        """Return href relative to extract_dir if the file exists, else None."""
         if not href:
-            return False
+            return None
         clean = href.split('?', 1)[0].split('#', 1)[0]
-        return (extract_dir / clean).exists()
+        candidate = (base_dir / clean)
+        if candidate.exists():
+            return str(candidate.resolve().relative_to(extract_dir.resolve()))
+        return None
 
     # 1. SCO resource from manifest (SCO before asset)
     if resources:
@@ -310,23 +321,23 @@ def find_entry_point(extract_dir, resources=None, package_type=None):
                         key=lambda r: 0 if 'sco' in (r.get('scorm_type') or '').lower() else 1)
         for res in ranked:
             href = res.get('href', '')
-            if href and href.split('?')[0].lower().endswith(('.html', '.htm')) and _exists(href):
-                return href
+            if href and href.split('?')[0].lower().endswith(('.html', '.htm')):
+                resolved = _resolve(href)
+                if resolved:
+                    return resolved
 
     # 2. Standard-specific descriptors
-    pt = package_type or detect_package_type(extract_dir)
+    launch = None
     if pt['type'] == 'xapi' and pt['descriptor']:
         launch = parse_tincan(pt['descriptor']).get('launch')
-        if _exists(launch):
-            return launch
     elif pt['type'] == 'cmi5' and pt['descriptor']:
         launch = parse_cmi5(pt['descriptor']).get('launch')
-        if _exists(launch):
-            return launch
     elif pt['type'] == 'aicc' and pt['descriptor']:
         launch = parse_aicc(pt['descriptor']).get('launch')
-        if _exists(launch):
-            return launch
+    if launch:
+        resolved = _resolve(launch)
+        if resolved:
+            return resolved
 
     # 3. Known authoring-tool entry filenames
     for candidate in ['index_lms_html5.html', 'index_lms.html', 'indexAPI.html',

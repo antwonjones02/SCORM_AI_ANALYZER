@@ -122,6 +122,10 @@ def analyze(zip_path, use_llm=False, use_video=False, use_player=False,
             metadata['title'] = embedded.get('title') or embedded.get('page_title')
         if not metadata.get('description') and embedded.get('description'):
             metadata['description'] = embedded['description']
+        if not metadata.get('duration_minutes') and \
+                content.get('estimated_duration_minutes'):
+            metadata['duration_minutes'] = content['estimated_duration_minutes']
+            metadata['duration_source'] = 'estimated_from_content'
 
         # ── Stats + deterministic score ──────────────────────────────────
         all_items = []
