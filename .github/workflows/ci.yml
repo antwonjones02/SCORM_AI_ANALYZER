@@ -20,7 +20,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install pytest playwright anthropic requests openpyxl
+          pip install pytest playwright anthropic requests openpyxl \
+                      fastapi 'uvicorn[standard]' python-multipart httpx
           playwright install chromium --with-deps
 
       - name: Rebuild test fixtures

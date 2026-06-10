@@ -80,6 +80,34 @@ Outputs land in `output/`:
 
 ---
 
+## The web app (scormdata.com-style)
+
+A drag-and-drop web front-end over the same engine — upload packages, watch
+jobs run, open reports:
+
+```bash
+pip install fastapi 'uvicorn[standard]' python-multipart
+python3 -m scormweb               # → http://localhost:8080
+```
+
+- Drag & drop multiple `.zip` packages (SCORM 1.2/2004, xAPI, cmi5, AICC)
+- Background jobs run the full pipeline (playthrough on by default; AI
+  enrichment auto-enables when an `ANTHROPIC_API_KEY` is present)
+- Live jobs table with scores/tiers, per-course HTML reports, JSON downloads,
+  and a combined catalog report at `/report`
+- JSON API: `POST /api/analyze`, `GET /api/jobs`, `GET /api/jobs/{id}`,
+  `GET /api/jobs/{id}/result.json`, `GET /healthz`
+
+Deploy it anywhere Docker runs (Render / Fly.io / Railway / a VPS):
+
+```bash
+docker build -t scorm-analyzer .
+docker run -p 8080:8080 -e ANTHROPIC_API_KEY=sk-ant-... -v scormdata:/data scorm-analyzer
+```
+
+Config env vars: `SCORMWEB_PORT`, `SCORMWEB_DATA_DIR`, `SCORMWEB_WORKERS`,
+`SCORMWEB_MAX_MB`, `ANTHROPIC_API_KEY` / `DEEPSEEK_API_KEY`.
+
 ## The one-stop CLI: `scormshop.py`
 
 ```bash
@@ -219,6 +247,8 @@ unlock strategies (quiz submit → simulated drag-drop → click-everything).
 | Path | Purpose |
 |------|---------|
 | `scormshop.py` | **The one-stop CLI** — analyze / play / report |
+| `scormweb/` | **Web app** — drag-and-drop upload UI + JSON API (FastAPI) |
+| `Dockerfile` | One-command deployment of the web app |
 | `scormlib/manifest.py` | Deep SCORM 1.2/2004 + LOM manifest parser |
 | `scormlib/package.py` | Safe extraction, standard + tool detection, inventory |
 | `scormlib/content.py` | Deterministic content mining (no AI) |

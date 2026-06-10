@@ -17,6 +17,8 @@ keywords = ["scorm", "xapi", "elearning", "lms", "ai-readiness"]
 dependencies = []
 
 [project.optional-dependencies]
+web = ["fastapi>=0.100", "uvicorn[standard]>=0.23", "python-multipart>=0.0.6",
+       "playwright>=1.40.0"]
 player = ["playwright>=1.40.0"]
 llm = ["anthropic>=0.20.0", "requests>=2.31.0"]
 video = ["openai-whisper"]
@@ -33,13 +35,14 @@ all = [
 dev = ["pytest>=7.0", "playwright>=1.40.0"]
 
 [tool.setuptools]
-packages = ["scormlib"]
+packages = ["scormlib", "scormweb"]
 py-modules = ["scormshop", "scorm_analyzer", "batch_analyzer",
               "generate_report", "generate_xlsx", "generate_playbook",
               "scorm_player"]
 
 [project.scripts]
 scormshop = "scormshop:main"
+scormweb = "scormweb.app:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
