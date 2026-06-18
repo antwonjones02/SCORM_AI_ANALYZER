@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Privacy Basics</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+      background: #f7f9fb;
+      color: #1f2933;
+      line-height: 1.7;
+    }
+    header {
+      background: #14324f;
+      color: #ffffff;
+      padding: 60px 24px;
+      text-align: center;
+    }
+    header h1 { margin: 0 0 8px; font-size: 2.2em; }
+    header p { margin: 0; color: #b9cde0; }
+    main { max-width: 720px; margin: 0 auto; padding: 24px; }
+    section.lesson {
+      background: #ffffff;
+      border: 1px solid #e1e7ed;
+      border-radius: 10px;
+      padding: 36px 40px;
+      margin: 48px 0;
+      min-height: 680px;
+      box-shadow: 0 1px 4px rgba(20, 50, 79, 0.08);
+    }
+    section.lesson h2 {
+      color: #14324f;
+      margin-top: 0;
+      font-size: 1.5em;
+      border-bottom: 3px solid #2e7fb8;
+      display: inline-block;
+      padding-bottom: 6px;
+    }
+    footer {
+      text-align: center;
+      padding: 48px 24px 80px;
+      color: #5d6b7a;
+    }
+    #completion-note {
+      display: none;
+      margin-top: 12px;
+      font-weight: bold;
+      color: #1d7a3e;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Data Privacy Basics</h1>
+    <p>Scroll through each lesson to complete this course.</p>
+  </header>
+  <main>
+    <section class="lesson" id="lesson-1">
+      <h2>1. Why Data Privacy Matters</h2>
+      <p>Every record your organisation holds about a customer or colleague is a promise:
+      that the information will be used fairly, kept accurate, and protected from misuse.
+      Privacy failures destroy trust faster than almost any other incident, and rebuilding
+      that trust can take years. Regulators can also impose significant fines, but the
+      reputational damage of a leaked database usually costs far more than any penalty.
+      Treat personal data as something borrowed, never owned.</p>
+    </section>
+
+    <section class="lesson" id="lesson-2">
+      <h2>2. GDPR in Plain Language</h2>
+      <p>The General Data Protection Regulation applies whenever you handle data about
+      people in the EU. Its core ideas are simple: collect only what you genuinely need,
+      use it only for the purpose you stated, keep it accurate, delete it when it is no
+      longer required, and secure it at every step. Individuals can ask to see, correct,
+      or erase their data, and your team must be able to respond within one month.</p>
+    </section>
+
+    <section class="lesson" id="lesson-3">
+      <h2>3. Strong Passwords and Passphrases</h2>
+      <p>Length beats complexity. A passphrase of four unrelated words is far harder to
+      crack than a short password full of symbols, and much easier to remember. Never
+      reuse a password between systems: one breached website should never unlock your
+      email. Use the company password manager to generate and store unique credentials,
+      and switch on multi-factor authentication everywhere it is offered, especially for
+      email and remote access.</p>
+    </section>
+
+    <section class="lesson" id="lesson-4">
+      <h2>4. Spotting Phishing Attacks</h2>
+      <p>Phishing remains the most common way attackers steal data. Watch for urgency
+      ("your account will be closed today"), unexpected attachments, and sender addresses
+      that almost match a real one. Hover over links before clicking and check where they
+      really lead. If a message asks for credentials, payment changes, or gift cards,
+      verify by phone using a number you already trust. When in doubt, report it &mdash;
+      a false alarm costs nothing.</p>
+    </section>
+
+    <section class="lesson" id="lesson-5">
+      <h2>5. Devices, Screens, and Clean Desks</h2>
+      <p>Privacy is physical as well as digital. Lock your screen whenever you leave your
+      desk, even at home. Keep laptops and phones encrypted and never leave them visible
+      in a parked car. Collect printouts from the printer immediately and shred anything
+      containing personal data when finished. In shared or public spaces, use a privacy
+      screen and be aware of who can see your display or overhear your calls.</p>
+    </section>
+
+    <section class="lesson" id="lesson-6">
+      <h2>6. Reporting a Suspected Breach</h2>
+      <p>Speed matters. If you lose a device, email the wrong recipient, or suspect an
+      account is compromised, report it to the security team immediately &mdash; many
+      regulations give organisations just 72 hours to notify authorities. Reporting early
+      is never punished; hiding a mistake always makes it worse. Save the evidence, note
+      the time, and let the response team take it from there. You have now completed
+      this course.</p>
+    </section>
+  </main>
+  <footer>
+    <p>End of course &mdash; thank you for reading.</p>
+    <p id="completion-note">Your completion has been recorded.</p>
+  </footer>
+
+  <script>
+    (function () {
+      "use strict";
+
+      /* --- SCORM 1.2 API discovery (standard findAPI walk) ---------- */
+      function findAPI(win) {
+        var tries = 0;
+        while ((win.API == null) && (win.parent != null) && (win.parent != win)) {
+          tries++;
+          if (tries > 500) { return null; }
+          win = win.parent;
+        }
+        return win.API;
+      }
+
+      function getAPI() {
+        var api = null;
+        try {
+          api = findAPI(window);
+          if ((api == null) && (window.opener != null)) {
+            api = findAPI(window.opener);
+          }
+        } catch (e) { api = null; }
+        return api;
+      }
+
+      var api = getAPI();
+      var initialized = false;
+      var completed = false;
+
+      function lmsCall(fn) {
+        if (api == null) { return; }
+        try { fn(); } catch (e) { /* never crash outside an LMS */ }
+      }
+
+      lmsCall(function () {
+        initialized = (api.LMSInitialize("") === "true");
+        if (initialized) {
+          var status = api.LMSGetValue("cmi.core.lesson_status");
+          if (status !== "completed" && status !== "passed") {
+            api.LMSSetValue("cmi.core.lesson_status", "incomplete");
+            api.LMSCommit("");
+          }
+        }
+      });
+
+      function markComplete() {
+        if (completed) { return; }
+        completed = true;
+        document.getElementById("completion-note").style.display = "block";
+        lmsCall(function () {
+          if (!initialized) { return; }
+          api.LMSSetValue("cmi.core.lesson_status", "completed");
+          api.LMSCommit("");
+        });
+      }
+
+      function atBottom() {
+        var doc = document.documentElement;
+        var scrolled = (window.pageYOffset || doc.scrollTop) + window.innerHeight;
+        return scrolled >= (doc.scrollHeight - 40);
+      }
+
+      window.addEventListener("scroll", function () {
+        if (!completed && atBottom()) { markComplete(); }
+      });
+
+      window.addEventListener("unload", function () {
+        lmsCall(function () {
+          if (initialized) {
+            api.LMSCommit("");
+            api.LMSFinish("");
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

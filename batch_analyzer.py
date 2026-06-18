@@ -24,7 +24,7 @@ from datetime import datetime
 sys.path.insert(0, str(Path(__file__).parent))
 from scorm_analyzer import analyze_scorm
 
-WORKSPACE = Path(os.environ.get('SCORM_WORKSPACE', str(Path(__file__).parent.parent.parent)))
+WORKSPACE = Path(os.environ.get('SCORM_WORKSPACE', str(Path.cwd())))
 OUTPUT_BASE = WORKSPACE / 'output'
 
 
@@ -56,6 +56,11 @@ def get_score(data):
     if isinstance(llm.get('ai_readiness_score'), (int, float)):
         return llm['ai_readiness_score']
 
+    # Deterministic baseline score (always present in v2 results)
+    stats = data.get('stats') or {}
+    if isinstance(stats.get('ai_readiness_score'), (int, float)):
+        return stats['ai_readiness_score']
+
     return None
 
 
@@ -78,7 +83,8 @@ def get_score_label(data, use_video, use_player):
     elif base is not None:
         return str(base)
     else:
-        return 'N/A'
+        baseline = (data.get('stats') or {}).get('ai_readiness_score')
+        return f'{baseline} (baseline)' if baseline is not None else 'N/A'
 
 
 def normalize_for_report(data, zip_name):

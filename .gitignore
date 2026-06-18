@@ -10,3 +10,10 @@ scorm_inbox/
 .env
 slide_*.png
 screenshots/
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# test fixtures are intentionally committed
+!tests/fixtures/*.zip
