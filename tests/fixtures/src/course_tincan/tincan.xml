@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tincan xmlns="http://projecttincan.com/tincan.xsd">
+  <activities>
+    <activity id="http://example.com/xapi/course/cyber-hygiene" type="http://adlnet.gov/expapi/activities/course">
+      <name>Cyber Hygiene Fundamentals</name>
+      <description lang="en-US">A one-page primer on everyday cyber hygiene: keeping software updated, using unique passwords with multi-factor authentication, and recognising suspicious links before clicking them.</description>
+      <launch lang="en-us">index.html</launch>
+    </activity>
+  </activities>
+</tincan>
