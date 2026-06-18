@@ -2,6 +2,7 @@ __pycache__/
 *.pyc
 *.pyo
 *.json
+!.claude/settings.json
 output/
 scorm_inbox/
 *.zip

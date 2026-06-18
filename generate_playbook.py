@@ -8,7 +8,7 @@ from weasyprint import HTML, CSS
 from pathlib import Path
 import os
 
-OUTPUT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../output/scorm_ai_readiness_playbook.pdf")
+OUTPUT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "output/scorm_ai_readiness_playbook.pdf")
 Path(OUTPUT_PATH).parent.mkdir(parents=True, exist_ok=True)
 
 # ── CSS ────────────────────────────────────────────────────────────────────────

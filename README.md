@@ -71,8 +71,8 @@ SCORM ZIP
 
 ```bash
 # Clone the repo
-git clone https://github.com/YOUR_USERNAME/scorm-ai-analyzer.git
-cd scorm-ai-analyzer
+git clone https://github.com/antwonjones02/scorm_ai_analyzer.git
+cd scorm_ai_analyzer
 
 # Install Python dependencies
 pip install -r requirements.txt
